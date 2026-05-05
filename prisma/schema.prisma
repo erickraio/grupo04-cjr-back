@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  url = env("DATABASE_URL")
+  provider = "sqlite"
+}
+model usuarios {
+  id Int @id @default(autoincrement())
+  username String @unique
+  email String @unique
+  senha_hash String 
+  nome String 
+  foto_perfil_url String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  lojas               lojas[]
+  avaliacoes_produto  avaliacao_produto[]
+  avaliacoes_loja     avaliacao_loja[]
+  comentarios         comentario_avaliacao[]
+}
+model lojas {
+  id Int @id @default(autoincrement())
+  id_dono Int 
+  usuario usuarios @relation(fields: [id_dono], references: [id])
+  nome String
+  descricao String?
+  banner_url String?
+  logo_url String?
+  foto_url String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  avaliacoes avaliacao_loja[]
+  produtos produtos[]
+}
+model categorias{
+  id Int @id @default(autoincrement())
+  id_cat_pai Int
+  icone_url String
+  nome String
+  produto produtos[]
+}
+model produtos {
+  id Int @id @default(autoincrement())
+  nome String 
+  id_loja Int 
+  loja lojas @relation(fields: [id_loja], references: [id])
+  id_categoria Int 
+  categoria categorias @relation(fields: [id_categoria], references: [id])
+  descricao String
+  preco Float
+  estoque Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  avaliacoes avaliacao_produto[]
+  imagens imagem_produto[]
+}
+model avaliacao_produto{
+  id Int @id @default(autoincrement())
+  id_produto Int 
+  produto produtos @relation(fields: [id_produto], references: [id])
+  id_usuario Int
+  usuario usuarios @relation(fields: [id_usuario], references: [id])
+  nota Int 
+  comentario String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  comentarios comentario_avaliacao[]
+}
+model avaliacao_loja{
+  id Int @id @default(autoincrement())
+  id_loja Int
+  loja lojas @relation(fields: [id_loja], references: [id])
+  id_usuario Int 
+  usuario usuarios @relation(fields: [id_usuario], references: [id])
+  nota Int 
+  comentario String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  comentarios comentario_avaliacao[]
+}
+model comentario_avaliacao {
+  id Int @id @default(autoincrement())
+  id_avaliacao_produto Int?
+  avaliacao_produto avaliacao_produto? @relation(fields: [id_avaliacao_produto], references: [id])
+  id_avaliacao_loja Int?
+  loavaliacao_loja avaliacao_loja? @relation(fields: [id_avaliacao_loja], references: [id])
+  id_usuario Int 
+  usuario usuarios @relation(fields: [id_usuario], references: [id])
+  comentario String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+model imagem_produto{
+  id Int @id @default(autoincrement())
+  id_produto Int
+  produto produtos @relation(fields: [id_produto], references: [id])
+  url_imagem String 
+  ordem Int
+}
