@@ -104,3 +104,11 @@ model imagem_produto{
   url_imagem String 
   ordem Int
 }
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
