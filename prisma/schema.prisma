@@ -4,13 +4,12 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js" 
 }
 
 datasource db {
   url = env("DATABASE_URL")
-  provider = "sqlite"
+  provider = "postgresql"
 }
 model usuarios {
   id Int @id @default(autoincrement())
@@ -104,4 +103,12 @@ model imagem_produto{
   produto produtos @relation(fields: [id_produto], references: [id])
   url_imagem String 
   ordem Int
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
