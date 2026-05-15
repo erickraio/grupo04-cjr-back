@@ -41,8 +41,8 @@ model lojas {
 }
 model categorias{
   id Int @id @default(autoincrement())
-  id_cat_pai Int
-  icone_url String
+  id_cat_pai Int?
+  icone_url String?
   nome String
   produto produtos[]
 }
