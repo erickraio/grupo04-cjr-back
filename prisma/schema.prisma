@@ -51,7 +51,7 @@ model produtos {
   nome String 
   id_loja Int 
   loja lojas @relation(fields: [id_loja], references: [id])
-  id_categoria Int 
+  id_categoria Int?
   categoria categorias @relation(fields: [id_categoria], references: [id])
   descricao String
   preco Float
