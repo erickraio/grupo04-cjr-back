@@ -36,6 +36,19 @@ export class AvalLojaService {
     return avaliacao;
   }
 
+  async findAllByLoja(lojaId: number) {
+    return this.prisma.avaliacao_loja.findMany({
+      where: { id_loja: lojaId },
+      include: { usuario: {
+        select: {
+          nome: true,
+        },
+      },
+    },
+    orderBy: { created_at: 'desc' },
+    });
+  }
+
   async update(id: number,userId:number, updateAvalLojaDto: UpdateAvalLojaDto) {
     const avaliacao = await this.findOne(id);
 

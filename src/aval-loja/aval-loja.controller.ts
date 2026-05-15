@@ -15,23 +15,22 @@ export class AvalLojaController {
     return this.avalLojaService.create(createAvalLojaDto, userId, lojaId);
   }
 
-  @Get()
-  findAll() {
-    return this.avalLojaService.findAll();
+  @Get('loja/:lojaId')
+  async findAllByLoja(@Param('lojaId', ParseIntPipe) lojaId: number) {
+    return this.avalLojaService.findAllByLoja(lojaId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.avalLojaService.findOne(+id);
-  }
-
+  @UseGuards(AuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAvalLojaDto: UpdateAvalLojaDto) {
-    return this.avalLojaService.update(+id, updateAvalLojaDto);
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateAvalLojaDto: UpdateAvalLojaDto, @Req() req: any ) {
+    const userId = req.user.sub;
+    return this.avalLojaService.update(id, userId, updateAvalLojaDto);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.avalLojaService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+    const userId = req.user.sub;
+    return this.avalLojaService.remove(id, userId);
   }
 }
