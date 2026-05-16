@@ -9,14 +9,7 @@ export class ProdutosService {
   constructor(private prisma: PrismaService) { }
  async  create(createProdutoDto: CreateProdutoDto) {
   return this.prisma.produtos.create({
-    data: {
-      nome: createProdutoDto.nome,
-      preco: createProdutoDto.preco,
-      estoque: createProdutoDto.estoque,
-      id_loja: createProdutoDto.id_loja,
-      id_categoria: createProdutoDto.id_categoria,
-      descricao: createProdutoDto.descricao ?? '',
-    },
+    data: createProdutoDto,
 })
   }
 
