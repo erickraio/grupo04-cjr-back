@@ -2,15 +2,21 @@ import { Injectable, UseGuards } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { PrismaService } from 'src/prisma.service';
-import { AuthGuard } from 'src/auth/auth.guard';
+
 
 @Injectable()
-@UseGuards(AuthGuard)
 export class ProdutosService {
   constructor(private prisma: PrismaService) { }
  async  create(createProdutoDto: CreateProdutoDto) {
   return this.prisma.produtos.create({
-    data: createProdutoDto,
+    data: {
+      nome: createProdutoDto.nome,
+      preco: createProdutoDto.preco,
+      estoque: createProdutoDto.estoque,
+      id_loja: createProdutoDto.id_loja,
+      id_categoria: createProdutoDto.id_categoria,
+      descricao: createProdutoDto.descricao ?? '',
+    },
 })
   }
 
@@ -27,7 +33,7 @@ async  findOne(id : number){
       where: {id},
     });
     if(!produtoExists){
-      throw new Error("Produto não encontrado");
+      throw new Error("Produto não encontrado.");
     }
     return this.prisma.produtos.findUnique({
        where: {id},
@@ -42,7 +48,7 @@ async  findOne(id : number){
       where: {id},
     });
     if(!produtoExists){
-      throw new Error("Produto não encontrado");
+      throw new Error("Produto não encontrado.");
     }
     return this.prisma.produtos.update({
       where: { id },
@@ -51,10 +57,12 @@ async  findOne(id : number){
   }
 
   async remove(id: number) {
+    await this.findOne(id);
     
-    return this.prisma.produtos.delete({
+    await this.prisma.produtos.delete({
       where: { id }, 
     });
+     return { message: 'Produto deletado!' };
   }
 
   

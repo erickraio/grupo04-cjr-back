@@ -1,18 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ProdutosService } from './produtos.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('produtos')
 export class ProdutosController {
   constructor(private readonly produtosService: ProdutosService) {}
 
-  @Post()
+ @UseGuards(AuthGuard)// apenas logados poderao criar
+  @Post()// criar
   create(@Body() createProdutoDto: CreateProdutoDto) {
     return this.produtosService.create(createProdutoDto);
   }
 
-  @Get()
+  @Get()// Achar 
   findAll() {
     return this.produtosService.findAll();
   }
@@ -22,12 +24,14 @@ export class ProdutosController {
     return this.produtosService.findOne(+id);
   }
 
-  @Patch(':id')
+ @UseGuards(AuthGuard)
+  @Patch(':id') //Atualizar 
   update(@Param('id') id: string, @Body() updateProdutoDto: UpdateProdutoDto) {
     return this.produtosService.update(+id, updateProdutoDto);
   }
 
-  @Delete(':id')
+ @UseGuards(AuthGuard)
+  @Delete(':id')//Deletar
   remove(@Param('id') id: string) {
     return this.produtosService.remove(+id);
   }
