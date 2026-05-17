@@ -12,7 +12,7 @@ export class AvalProdutoService {
       where: {id: produtoId},
     });
 
-    if (produto!) {
+    if (!produto) {
       throw new NotFoundException('O produto não existe');
     }
     
