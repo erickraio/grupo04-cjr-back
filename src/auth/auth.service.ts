@@ -56,7 +56,7 @@ export class AuthService {
   // Salva no banco de dados
   await this.prisma.passwordReset.create({
     data: {
-      email: data.email,
+      email: data.email as string,
       token: token,
       expiresAt: expiresAt,
     },

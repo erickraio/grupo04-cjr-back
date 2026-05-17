@@ -23,14 +23,14 @@ export class UserService {
       throw new ConflictException('E-mail ou nome de usuário já estão em uso.');
     }
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const hashedPassword = await (bcrypt.hash(data.password!, 10) as Promise<string>);
 
     const newUser = await this.prisma.usuarios.create({
       data: {
-        nome: data.name, 
-        username: data.username,
-        email: data.email,
-        senha_hash: hashedPassword, 
+        nome: data.name as string, 
+        username: data.username as string,
+        email: data.email as string,
+        senha_hash: hashedPassword , 
       },
     });
 
