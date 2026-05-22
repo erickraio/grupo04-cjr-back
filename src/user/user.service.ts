@@ -59,13 +59,16 @@ export class UserService {
 
     return user;
   }
-  async update(id: number, updateData: UpdateUserDto) {
+async update(id: number, updateData: UpdateUserDto) {
     await this.findOne(id); 
 
     const dataToUpdate: any = {};
     if (updateData.name) dataToUpdate.nome = updateData.name;
     if (updateData.username) dataToUpdate.username = updateData.username;
     if (updateData.email) dataToUpdate.email = updateData.email;
+    if ((updateData as any).foto_perfil_url) {
+      dataToUpdate.foto_perfil_url = (updateData as any).foto_perfil_url;
+    }
     
     if (updateData.password) {
       dataToUpdate.senha_hash = await bcrypt.hash(updateData.password, 10);
@@ -74,6 +77,11 @@ export class UserService {
     const updatedUser = await this.prisma.usuarios.update({
       where: { id },
       data: dataToUpdate,
+      include: {
+        lojas: { include: { produtos: { include: { imagens: true } } } },
+        avaliacoes_produto: true,
+        avaliacoes_loja: true,
+      }
     });
 
     const { senha_hash, ...result } = updatedUser;
