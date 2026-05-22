@@ -7,8 +7,6 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
-
-  // --- CADASTRAR ---
   async register(data: CreateUserDto) {
     const userExists = await this.prisma.usuarios.findFirst({
       where: {
@@ -30,36 +28,47 @@ export class UserService {
         nome: data.name as string, 
         username: data.username as string,
         email: data.email as string,
-        senha_hash: hashedPassword , 
+        senha_hash: hashedPassword, 
       },
     });
 
     const { senha_hash, ...result } = newUser;
     return result;
   } 
-
-  // --- LER (Read) ---
   async findOne(id: number) {
     const user = await this.prisma.usuarios.findUnique({
       where: { id },
+      include: {
+        lojas: { 
+          include: { 
+            produtos: {
+              include: {
+                imagens: true 
+              }
+            } 
+          } 
+        },
+        avaliacoes_produto: true,
+        avaliacoes_loja: true,
+      },
     });
 
     if (!user) {
       throw new NotFoundException('Usuário não encontrado.');
     }
 
-    const { senha_hash, ...result } = user;
-    return result;
+    return user;
   }
-
-  // --- ATUALIZAR (Update) ---
-  async update(id: number, updateData: UpdateUserDto) {
+async update(id: number, updateData: UpdateUserDto) {
     await this.findOne(id); 
 
     const dataToUpdate: any = {};
     if (updateData.name) dataToUpdate.nome = updateData.name;
     if (updateData.username) dataToUpdate.username = updateData.username;
     if (updateData.email) dataToUpdate.email = updateData.email;
+    if ((updateData as any).foto_perfil_url) {
+      dataToUpdate.foto_perfil_url = (updateData as any).foto_perfil_url;
+    }
     
     if (updateData.password) {
       dataToUpdate.senha_hash = await bcrypt.hash(updateData.password, 10);
@@ -68,13 +77,16 @@ export class UserService {
     const updatedUser = await this.prisma.usuarios.update({
       where: { id },
       data: dataToUpdate,
+      include: {
+        lojas: { include: { produtos: { include: { imagens: true } } } },
+        avaliacoes_produto: true,
+        avaliacoes_loja: true,
+      }
     });
 
     const { senha_hash, ...result } = updatedUser;
     return result;
   }
-
-  // --- DELETAR (Delete) ---
   async remove(id: number) {
     await this.findOne(id);
 
