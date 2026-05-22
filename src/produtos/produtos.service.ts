@@ -13,8 +13,14 @@ export class ProdutosService {
 })
   }
 
-   async findAll(){
+   async findAll(busca?: string) {
     return this.prisma.produtos.findMany({
+      where: busca ? {
+        nome: {
+          contains: busca,
+          mode: 'insensitive',
+        },
+      } : {},
         include:{
           categoria: true  //acha as categorias do produto 
         }
