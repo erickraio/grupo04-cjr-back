@@ -7,8 +7,6 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
-
-  // --- CADASTRAR ---
   async register(data: CreateUserDto) {
     const userExists = await this.prisma.usuarios.findFirst({
       where: {
@@ -30,29 +28,37 @@ export class UserService {
         nome: data.name as string, 
         username: data.username as string,
         email: data.email as string,
-        senha_hash: hashedPassword , 
+        senha_hash: hashedPassword, 
       },
     });
 
     const { senha_hash, ...result } = newUser;
     return result;
   } 
-
-  // --- LER (Read) ---
   async findOne(id: number) {
     const user = await this.prisma.usuarios.findUnique({
       where: { id },
+      include: {
+        lojas: { 
+          include: { 
+            produtos: {
+              include: {
+                imagens: true 
+              }
+            } 
+          } 
+        },
+        avaliacoes_produto: true,
+        avaliacoes_loja: true,
+      },
     });
 
     if (!user) {
       throw new NotFoundException('Usuário não encontrado.');
     }
 
-    const { senha_hash, ...result } = user;
-    return result;
+    return user;
   }
-
-  // --- ATUALIZAR (Update) ---
   async update(id: number, updateData: UpdateUserDto) {
     await this.findOne(id); 
 
@@ -73,8 +79,6 @@ export class UserService {
     const { senha_hash, ...result } = updatedUser;
     return result;
   }
-
-  // --- DELETAR (Delete) ---
   async remove(id: number) {
     await this.findOne(id);
 

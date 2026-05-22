@@ -1,8 +1,8 @@
-import { Body, Controller, Post, Get, Param, Patch, Delete, ParseIntPipe, UseGuards } from '@nestjs/common'; // Adicione UseGuards
+import { Body, Controller, Post, Get, Param, Patch, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from '../auth/auth.guard'; // Importe o Guard
+import { AuthGuard } from '../auth/auth.guard'; 
 
 @Controller('user')
 export class UserController {
@@ -17,10 +17,7 @@ export class UserController {
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne(id);
   }
-
-  // --- ROTAS PROTEGIDAS ---
-
-  @UseGuards(AuthGuard) // <--- O segurança agora vigia esta porta
+  @UseGuards(AuthGuard) 
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number, 
@@ -29,7 +26,7 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
-  @UseGuards(AuthGuard) // <--- E esta também
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.userService.remove(id);
