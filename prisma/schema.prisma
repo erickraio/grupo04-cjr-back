@@ -39,12 +39,26 @@ model lojas {
   avaliacoes avaliacao_loja[]
   produtos produtos[]
 }
+<<<<<<< HEAD
 model categorias{
   id Int @id @default(autoincrement())
   id_cat_pai Int?
   icone_url String?
   nome String
   produto produtos[]
+=======
+model categorias {
+  id            Int          @id @default(autoincrement())
+  id_cat_pai    Int?
+  
+  // Alterado de 'Categoria' para 'categorias'
+  categoriaPai  categorias?  @relation("Subcategorias", fields: [id_cat_pai], references: [id])
+  subcategorias categorias[] @relation("Subcategorias")
+
+  icone_url     String
+  nome          String
+  produto       produtos[]
+>>>>>>> origin/crud-categorias
 }
 model produtos {
   id Int @id @default(autoincrement())

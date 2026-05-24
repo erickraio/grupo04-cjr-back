@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { CategoryModule } from './category/category.module';
 
 import { ProdutosModule } from './produtos/produtos.module';
 
@@ -13,7 +14,9 @@ import { AvalLojaModule } from './aval-loja/aval-loja.module';
 import { ComentAvalModule } from './coment-aval/coment-aval.module';
 
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule, LojasModule, AvalProdutoModule, AvalLojaModule, ComentAvalModule, ProdutosModule],
+
+  imports: [PrismaModule, UserModule, AuthModule, LojasModule, AvalProdutoModule, AvalLojaModule, ComentAvalModule, ProdutosModule,CategoryModule],
+
 
   controllers: [AppController],
   providers: [AppService],
