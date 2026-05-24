@@ -39,14 +39,7 @@ model lojas {
   avaliacoes avaliacao_loja[]
   produtos produtos[]
 }
-<<<<<<< HEAD
-model categorias{
-  id Int @id @default(autoincrement())
-  id_cat_pai Int?
-  icone_url String?
-  nome String
-  produto produtos[]
-=======
+
 model categorias {
   id            Int          @id @default(autoincrement())
   id_cat_pai    Int?
@@ -58,7 +51,7 @@ model categorias {
   icone_url     String
   nome          String
   produto       produtos[]
->>>>>>> origin/crud-categorias
+
 }
 model produtos {
   id Int @id @default(autoincrement())
