@@ -16,7 +16,8 @@ export class ProdutosService {
    async findAll(){
     return this.prisma.produtos.findMany({
         include:{
-          categoria: true  //acha as categorias do produto 
+          categoria: true, //acha as categorias do produto 
+           imagens: true
         }
     });
   }
@@ -31,7 +32,8 @@ async  findOne(id : number){
     return this.prisma.produtos.findUnique({
        where: {id},
          include: {
-        categoria: true
+        categoria: true,
+         imagens: true
       
     }});
   }
