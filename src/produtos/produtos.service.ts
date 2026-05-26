@@ -22,7 +22,8 @@ export class ProdutosService {
         },
       } : {},
         include:{
-          categoria: true  //acha as categorias do produto 
+          categoria: true,
+          loja: true  //acha as categorias do produto 
         }
     });
   }
