@@ -28,7 +28,7 @@ model usuarios {
 model lojas {
   id Int @id @default(autoincrement())
   id_dono Int 
-  usuario usuarios @relation(fields: [id_dono], references: [id])
+  usuario usuarios @relation(fields: [id_dono], references: [id], onDelete: Cascade)
   nome String
   descricao String?
   banner_url String?
