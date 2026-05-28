@@ -23,7 +23,7 @@ export class ProdutosService {
       } : {},
         include:{
           categoria: true,
-          loja: true  //acha as categorias do produto 
+          loja: true 
         }
     });
   }
