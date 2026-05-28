@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma.service'; 
@@ -60,7 +60,8 @@ export class UserService {
     return user;
   }
 async update(id: number, updateData: UpdateUserDto) {
-    await this.findOne(id); 
+    // 1. Guarda o usuário na variável para podermos comparar a senha antiga
+    const user = await this.findOne(id); 
 
     const dataToUpdate: any = {};
     if (updateData.name) dataToUpdate.nome = updateData.name;
@@ -70,9 +71,29 @@ async update(id: number, updateData: UpdateUserDto) {
       dataToUpdate.foto_perfil_url = (updateData as any).foto_perfil_url;
     }
     
-    if (updateData.password) {
+    // ==========================================
+    // LÓGICA DE ALTERAÇÃO DE SENHA COM VERIFICAÇÃO DA SENHA ANTIGA
+    // ==========================================
+    const payload = updateData as any; // Usando 'any' caso o DTO não tenha esses campos mapeados
+    
+    // Se o frontend enviou "senhaAntiga" e "senha" (nova)
+    if (payload.senhaAntiga && payload.senha) {
+      
+      // Compara a senha antiga digitada com o hash que está no banco
+      const isPasswordValid = await bcrypt.compare(payload.senhaAntiga, user.senha_hash);
+      
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('A senha antiga está incorreta.');
+      }
+      
+      // Se estiver certa, criptografa a nova e salva
+      dataToUpdate.senha_hash = await bcrypt.hash(payload.senha, 10);
+      
+    } else if (updateData.password) {
+      // Mantém a lógica original como segurança, caso outro local da aplicação atualize só com "password"
       dataToUpdate.senha_hash = await bcrypt.hash(updateData.password, 10);
     }
+    // ==========================================
 
     const updatedUser = await this.prisma.usuarios.update({
       where: { id },
@@ -88,8 +109,10 @@ async update(id: number, updateData: UpdateUserDto) {
     return result;
   }
   async remove(id: number) {
+    // 1. Verifica se o usuário realmente existe antes de tentar deletar
     await this.findOne(id);
 
+    // 2. Deleta o usuário do banco de dados
     await this.prisma.usuarios.delete({
       where: { id },
     });
