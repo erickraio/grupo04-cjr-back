@@ -20,5 +20,7 @@ export class CreateProdutoDto {
 
   @IsNumber() @IsNotEmpty({message: 'Id da categoria vazio'})
   id_categoria !: number;
+
+  imagem_produto?: imagem_produto[];
    
 }

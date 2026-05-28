@@ -31,7 +31,7 @@ export class AvalProdutoService {
       where: {id_produto: produtoId},
       include: {
         usuario: {
-          select: {nome: true, username: true},
+          select: {nome: true, username: true , foto_perfil_url: true},
         },
       },
     });

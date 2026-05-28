@@ -39,12 +39,19 @@ model lojas {
   avaliacoes avaliacao_loja[]
   produtos produtos[]
 }
-model categorias{
-  id Int @id @default(autoincrement())
-  id_cat_pai Int?
-  icone_url String?
-  nome String
-  produto produtos[]
+
+model categorias {
+  id            Int          @id @default(autoincrement())
+  id_cat_pai    Int?
+  
+  // Alterado de 'Categoria' para 'categorias'
+  categoriaPai  categorias?  @relation("Subcategorias", fields: [id_cat_pai], references: [id])
+  subcategorias categorias[] @relation("Subcategorias")
+
+  icone_url     String
+  nome          String
+  produto       produtos[]
+
 }
 model produtos {
   id Int @id @default(autoincrement())
@@ -52,7 +59,7 @@ model produtos {
   id_loja Int 
   loja lojas @relation(fields: [id_loja], references: [id])
   id_categoria Int?
-  categoria categorias @relation(fields: [id_categoria], references: [id])
+  categoria categorias? @relation(fields: [id_categoria], references: [id])
   descricao String
   preco Float
   estoque Int

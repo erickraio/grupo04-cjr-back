@@ -21,9 +21,10 @@ export class ProdutosService {
           mode: 'insensitive',
         },
       } : {},
-        include:{
-          categoria: true,
-          loja: true 
+        include:
+          loja: true,
+          categoria: true, //acha as categorias do produto 
+           imagens: true
         }
     });
   }
@@ -38,7 +39,8 @@ async  findOne(id : number){
     return this.prisma.produtos.findUnique({
        where: {id},
          include: {
-        categoria: true
+        categoria: true,
+         imagens: true
       
     }});
   }
