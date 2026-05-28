@@ -13,9 +13,16 @@ export class ProdutosService {
 })
   }
 
-   async findAll(){
+   async findAll(busca?: string) {
     return this.prisma.produtos.findMany({
-        include:{
+      where: busca ? {
+        nome: {
+          contains: busca,
+          mode: 'insensitive',
+        },
+      } : {},
+        include:
+          loja: true,
           categoria: true, //acha as categorias do produto 
            imagens: true
         }
