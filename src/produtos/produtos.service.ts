@@ -21,7 +21,7 @@ export class ProdutosService {
           mode: 'insensitive',
         },
       } : {},
-        include:
+        include:{
           loja: true,
           categoria: true, //acha as categorias do produto 
            imagens: true

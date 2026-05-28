@@ -48,7 +48,7 @@ model categorias {
   categoriaPai  categorias?  @relation("Subcategorias", fields: [id_cat_pai], references: [id])
   subcategorias categorias[] @relation("Subcategorias")
 
-  icone_url     String
+  icone_url     String?
   nome          String
   produto       produtos[]
 
