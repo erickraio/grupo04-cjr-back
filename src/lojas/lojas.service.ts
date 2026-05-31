@@ -22,6 +22,13 @@ export class LojasService {
   async findOne(id: number) {
     return this.prisma.lojas.findUnique({
       where: { id },
+      include: {
+        produtos: {
+          include: {
+            imagens: true,
+          }
+        }
+      }
     });
   }
   async update(id: number, dados: any) {
