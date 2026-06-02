@@ -39,7 +39,8 @@ export class LojasService {
 
     return {
       ...loja,
-      estrelas: Math.round(mediaAvaliacoes),
+      estrelas: mediaAvaliacoes,
+      totalAvaliacoes: totalAvaliacoes,
     };
   }
   async update(id: number, dados: any) {
