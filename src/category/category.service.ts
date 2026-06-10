@@ -16,11 +16,8 @@ export class CategoryService {
 
   findAll() {
     return this.prisma.categorias.findMany({
-      include: {
-        subcategorias: true, // Retorna as subcategorias automaticamente
-      },
       where: {
-        id_cat_pai: null, // Lista apenas as categorias principais (sem pai)
+        id_cat_pai: { not: null }, // retorna só subcategorias
       },
     });
   }
