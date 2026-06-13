@@ -20,16 +20,28 @@ export class LojasService {
     return this.prisma.lojas.findMany();
   }
   async findOne(id: number) {
-    return this.prisma.lojas.findUnique({
+    const loja = await this.prisma.lojas.findUnique({
       where: { id },
       include: {
         produtos: {
           include: {
             imagens: true,
           }
-        }
+        },
+        avaliacoes: true,
       }
     });
+    if (!loja) { return null; }
+    
+    const totalAvaliacoes = loja.avaliacoes?.length || 0;
+    const somaAvaliacoes = loja.avaliacoes?.reduce((soma, avaliacao) => soma+avaliacao.nota, 0) || 0;
+    const mediaAvaliacoes = totalAvaliacoes > 0 ? somaAvaliacoes / totalAvaliacoes : 0;
+
+    return {
+      ...loja,
+      estrelas: mediaAvaliacoes,
+      totalAvaliacoes: totalAvaliacoes,
+    };
   }
   async update(id: number, dados: any) {
     return this.prisma.lojas.update({

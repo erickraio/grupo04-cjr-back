@@ -14,22 +14,41 @@ export class AvalProdutoController {
     const userId = req.user.sub;
     return this.avalProdutoService.create(createAvalProdutoDto, userId, produtoId);
   }
+
   @Get('produto/:produtoId')
   async findAllByProduct(@Param('produtoId', ParseIntPipe) produtoId: number) {
     return this.avalProdutoService.findAllByProduct(produtoId);
   }
 
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.avalProdutoService.findOne(id);
+  }
+
   @UseGuards(AuthGuard)
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateAvalProdutoDto: UpdateAvalProdutoDto, @Req() req:any) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateAvalProdutoDto: UpdateAvalProdutoDto, @Req() req:any) {
     const userId = req.user.sub;
     return this.avalProdutoService.update(id, userId, updateAvalProdutoDto);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: number, @Req() req:any) {
+  async remove(@Param('id', ParseIntPipe) id: number, @Req() req:any) {
     const userId = req.user.sub;
     return this.avalProdutoService.remove(id, userId);
+  }
+  @UseGuards(AuthGuard)
+  @Post(':id/comentario')
+  async addComment(@Param('id', ParseIntPipe) idAvaliacao: number, @Body('comentario') comentario: string, @Req() req: any) {
+    const userId = req.user.sub;
+    return this.avalProdutoService.addComment(idAvaliacao, userId, comentario);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('comentario/:comentarioId')
+  async updateComment(@Param('comentarioId', ParseIntPipe) comentarioId: number, @Body('comentario') comentario: string, @Req() req: any) {
+    const userId = req.user.sub;
+    return this.avalProdutoService.updateComment(comentarioId, userId, comentario);
   }
 }
