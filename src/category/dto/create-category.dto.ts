@@ -11,5 +11,5 @@ export class CreateCategoryDto {
 
   @IsOptional()
   @IsInt()
-  id_cat_pai?: number;
+  id_cat_pai ?: number;
 }

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { diskStorage } from 'multer'; 
 import { extname } from 'path';
 import { ProdutosService } from './produtos.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
@@ -36,6 +36,27 @@ async uploadImagem(
   create(@Body() createProdutoDto: CreateProdutoDto) {
     return this.produtosService.create(createProdutoDto);
   }
+  
+ @UseGuards(AuthGuard)// apenas logados poderao criar
+  @Post(':id/imagens')
+  @UseInterceptors(FileInterceptor('imagem', { 
+    storage: diskStorage({
+      destination: './uploads/produtos', // Pasta física onde será salvo
+      filename: (req, file, cb) => {
+        
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = extname(file.originalname);
+        cb(null, `${uniqueSuffix}${ext}`);
+      }
+    })
+  }))
+  uploadImagem(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body('ordem') ordem: string
+  ) {
+    return this.produtosService.salvarImagem(+id, file, +ordem);
+  }
 
   @Get()// Achar 
   findAll(@Query('busca') busca?: string) {
@@ -59,3 +80,4 @@ async uploadImagem(
     return this.produtosService.remove(+id);
   }
 }
+
