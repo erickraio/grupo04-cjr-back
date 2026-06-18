@@ -12,18 +12,45 @@ datasource db {
   provider = "postgresql"
 }
 model usuarios {
-  id Int @id @default(autoincrement())
-  username String @unique
-  email String @unique
-  senha_hash String 
-  nome String 
-  foto_perfil_url String?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  lojas               lojas[]
-  avaliacoes_produto  avaliacao_produto[]
-  avaliacoes_loja     avaliacao_loja[]
-  comentarios         comentario_avaliacao[]
+  id                 Int                  @id @default(autoincrement())
+  username           String               @unique
+  email              String               @unique
+  senha_hash         String 
+  nome               String 
+  foto_perfil_url    String?
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @updatedAt
+  lojas              lojas[]
+  avaliacoes_produto avaliacao_produto[]
+  avaliacoes_loja    avaliacao_loja[]
+  comentarios        comentario_avaliacao[]
+  itens_carrinho     ItemCarrinho[]
+  pedidos            Pedido[]
+}
+model ItemCarrinho {
+  id         Int      @id @default(autoincrement())
+  usuario_id Int
+  produto_id Int
+  quantidade Int
+  usuario    usuarios @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  produto    produtos  @relation(fields: [produto_id], references: [id], onDelete: Cascade) 
+}
+model Pedido {
+  id         Int          @id @default(autoincrement())
+  usuario_id Int
+  total      Float
+  created_at DateTime     @default(now())
+  usuario    usuarios     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  itens      ItemPedido[]
+}
+model ItemPedido {
+  id         Int     @id @default(autoincrement())
+  pedido_id  Int
+  produto_id Int
+  quantidade Int
+  preco_pago Float
+  pedido     Pedido  @relation(fields: [pedido_id], references: [id], onDelete: Cascade)
+  produto    produtos @relation(fields: [produto_id], references: [id], onDelete: Cascade)
 }
 model lojas {
   id Int @id @default(autoincrement())
@@ -43,8 +70,6 @@ model lojas {
 model categorias {
   id            Int          @id @default(autoincrement())
   id_cat_pai    Int?
-  
-  // Alterado de 'Categoria' para 'categorias'
   categoriaPai  categorias?  @relation("Subcategorias", fields: [id_cat_pai], references: [id])
   subcategorias categorias[] @relation("Subcategorias")
 
@@ -67,6 +92,8 @@ model produtos {
   updated_at DateTime @updatedAt
   avaliacoes avaliacao_produto[]
   imagens imagem_produto[]
+  itens_carrinho ItemCarrinho[] 
+  itens_pedido   ItemPedido[]
 }
 model avaliacao_produto{
   id Int @id @default(autoincrement())

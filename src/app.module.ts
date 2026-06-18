@@ -7,7 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 
 import { ProdutosModule } from './produtos/produtos.module';
-
+import { CarrinhoModule } from './carrinho/carrinho.module';
 import { LojasModule } from './lojas/lojas.module';
 import { AvalProdutoModule } from './aval-produto/aval-produto.module';
 import { AvalLojaModule } from './aval-loja/aval-loja.module';
@@ -15,7 +15,7 @@ import { ComentAvalModule } from './coment-aval/coment-aval.module';
 
 @Module({
 
-  imports: [PrismaModule, UserModule, AuthModule, LojasModule, AvalProdutoModule, AvalLojaModule, ComentAvalModule, ProdutosModule,CategoryModule],
+  imports: [PrismaModule, UserModule, AuthModule, LojasModule, AvalProdutoModule, AvalLojaModule, ComentAvalModule, ProdutosModule,CategoryModule, CarrinhoModule],
 
 
   controllers: [AppController],
