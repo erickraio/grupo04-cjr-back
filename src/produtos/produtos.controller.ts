@@ -6,6 +6,7 @@ import { ProdutosService } from './produtos.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import {Multer} from 'multer';
 
 
 
@@ -13,7 +14,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 export class ProdutosController {
   constructor(private readonly produtosService: ProdutosService) {}
 
-  @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @Post(':id/imagens')
 @UseInterceptors(FileInterceptor('imagem', {
   storage: diskStorage({
@@ -50,14 +51,7 @@ async uploadImagem(
       }
     })
   }))
-  uploadImagem(
-    @Param('id') id: string,
-    @UploadedFile() file: Express.Multer.File,
-    @Body('ordem') ordem: string
-  ) {
-    return this.produtosService.salvarImagem(+id, file, +ordem);
-  }
-
+  
   @Get()// Achar 
   findAll(@Query('busca') busca?: string) {
     return this.produtosService.findAll(busca);

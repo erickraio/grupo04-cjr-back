@@ -16,23 +16,6 @@ export class ProdutosService {
 })
   }
 
-  
-
- 
- async salvarImagem(produtoId: number, file: Express.Multer.File, ordem: number) {
-    // 1. Verifica se o produto existe
-    await this.findOne(produtoId);
-
-    // 2. Salva o caminho da imagem no banco de dados vinculada ao produto
-    return this.prisma.imagem_produto.create({
-      data: {
-        url_imagem: `/uploads/produtos/${file.filename}`, 
-        ordem: ordem || 1,
-        id_produto: produtoId 
-      }
-    });
-  }
-
    async findAll(busca?: string) {
     return this.prisma.produtos.findMany({
       where: busca ? {
