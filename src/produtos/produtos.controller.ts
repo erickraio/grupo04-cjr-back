@@ -32,26 +32,13 @@ async uploadImagem(
 ) {
   return this.produtosService.salvarImagem(+id, `/uploads/${file.filename}`, +ordem || 1);
 }
+
  @UseGuards(AuthGuard)// apenas logados poderao criar
   @Post()// criar
   create(@Body() createProdutoDto: CreateProdutoDto) {
     return this.produtosService.create(createProdutoDto);
   }
-  
- @UseGuards(AuthGuard)// apenas logados poderao criar
-  @Post(':id/imagens')
-  @UseInterceptors(FileInterceptor('imagem', { 
-    storage: diskStorage({
-      destination: './uploads/produtos', // Pasta física onde será salvo
-      filename: (req, file, cb) => {
-        
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = extname(file.originalname);
-        cb(null, `${uniqueSuffix}${ext}`);
-      }
-    })
-  }))
-  
+
   @Get()// Achar 
   findAll(@Query('busca') busca?: string) {
     return this.produtosService.findAll(busca);
