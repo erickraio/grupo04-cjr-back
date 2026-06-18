@@ -28,7 +28,11 @@ export class LojasService {
             imagens: true,
           }
         },
-        avaliacoes: true,
+        avaliacoes: {
+          include: {
+            usuario: true,
+          }
+        }
       }
     });
     if (!loja) { return null; }
