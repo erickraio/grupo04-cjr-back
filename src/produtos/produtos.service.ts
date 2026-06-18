@@ -40,7 +40,8 @@ async  findOne(id : number){
        where: {id},
          include: {
         categoria: true,
-         imagens: true
+         imagens: true,
+         loja: true
       
     }});
   }
@@ -67,5 +68,14 @@ async  findOne(id : number){
      return { message: 'Produto deletado!' };
   }
 
+  async salvarImagem(idProduto: number, urlImagem: string, ordem: number) {
+  return this.prisma.imagem_produto.create({
+    data: {
+      id_produto: idProduto,
+      url_imagem: urlImagem,
+      ordem: ordem,
+    },
+  });
+}
   
 }
