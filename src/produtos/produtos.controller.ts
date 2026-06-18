@@ -1,13 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { ProdutosService } from './produtos.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
+
+
 @Controller('produtos')
 export class ProdutosController {
   constructor(private readonly produtosService: ProdutosService) {}
 
+  @UseGuards(AuthGuard)
+@Post(':id/imagens')
+@UseInterceptors(FileInterceptor('imagem', {
+  storage: diskStorage({
+    destination: './uploads',
+    filename: (req, file, cb) => {
+      const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
+      cb(null, uniqueName);
+    },
+  }),
+}))
+async uploadImagem(
+  @Param('id') id: string,
+  @UploadedFile() file: Express.Multer.File,
+  @Body('ordem') ordem: string,
+) {
+  return this.produtosService.salvarImagem(+id, `/uploads/${file.filename}`, +ordem || 1);
+}
  @UseGuards(AuthGuard)// apenas logados poderao criar
   @Post()// criar
   create(@Body() createProdutoDto: CreateProdutoDto) {
