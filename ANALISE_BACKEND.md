@@ -346,7 +346,7 @@ grupo04-cjr-back/
 - [ ] **Forgot password retorna token** — intencional para testes, mas inseguro para produção
 - [ ] **Secret JWT hardcoded** — deveria estar em variável de ambiente
 - [ ] **Upload local** — sem CDN/storage externo (S3, Cloudinary, etc.)
-- [ ] **Filtro por categoria em produtos** — `GET /produtos` não aceita filtro por `id_categoria`
+- [ ] **Filtro por categoria em produtos** — `GET /produtos` não aceita filtro por `id_categoria` (frontend filtra client-side — deliberado)
 
 ---
 
@@ -362,7 +362,7 @@ grupo04-cjr-back/
 
 4. **Lojas sem proteção** → qualquer um pode criar/editar/deletar qualquer loja
 5. **Forgot password retorna token** → em produção, deveria enviar por email
-6. **Sem filtro de categoria em produtos** → frontend precisa filtrar manualmente
+6. **Sem filtro de categoria em produtos** → frontend filtra manualmente (client-side, deliberado)
 7. **Entidades vazias** → sem tipagem adequada nos controllers
 
 ### 🟢 Desejáveis
