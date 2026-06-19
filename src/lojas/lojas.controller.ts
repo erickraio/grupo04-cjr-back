@@ -56,8 +56,37 @@ export class LojasController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLojaDto: any) {
-    return this.lojasService.update(+id, updateLojaDto);
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'banner', maxCount: 1 },
+    { name: 'logo', maxCount: 1 },
+    { name: 'foto', maxCount: 1 },
+  ], {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+      },
+    }),
+  }))
+  async update(
+    @Param('id') id: string,
+    @Body() body: any,
+    @UploadedFiles() files: {
+      banner?: Express.Multer.File[];
+      logo?: Express.Multer.File[];
+      foto?: Express.Multer.File[];
+    },
+  ) {
+    const data: any = {};
+    if (body.nome !== undefined) data.nome = body.nome;
+    if (body.descricao !== undefined) data.descricao = body.descricao;
+    if (body.id_categoria !== undefined) data.id_categoria = body.id_categoria ? Number(body.id_categoria) : null;
+    if (files?.banner?.[0]) data.banner_url = `/uploads/${files.banner[0].filename}`;
+    if (files?.logo?.[0]) data.logo_url = `/uploads/${files.logo[0].filename}`;
+    if (files?.foto?.[0]) data.foto_url = `/uploads/${files.foto[0].filename}`;
+
+    return this.lojasService.update(+id, data);
   }
 
   @Delete(':id')

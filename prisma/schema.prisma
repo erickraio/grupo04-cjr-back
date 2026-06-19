@@ -106,7 +106,7 @@ model avaliacao_produto {
   comentario  String?
   created_at  DateTime               @default(now())
   updated_at  DateTime               @updatedAt
-  produto     produtos               @relation(fields: [id_produto], references: [id])
+  produto    produtos @relation(fields: [id_produto], references: [id], onDelete: Cascade)
   usuario     usuarios               @relation(fields: [id_usuario], references: [id])
   comentarios comentario_avaliacao[]
 }
@@ -142,7 +142,7 @@ model imagem_produto {
   id_produto Int
   url_imagem String
   ordem      Int
-  produto    produtos @relation(fields: [id_produto], references: [id])
+  produto    produtos @relation(fields: [id_produto], references: [id], onDelete: Cascade)
 }
 
 model PasswordReset {
