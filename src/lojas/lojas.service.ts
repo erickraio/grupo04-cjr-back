@@ -13,6 +13,7 @@ export class LojasService {
         banner_url: dados.banner_url,
         logo_url: dados.logo_url,
         foto_url: dados.foto_url,
+        id_categoria: dados.id_categoria,
       },
     });
   }

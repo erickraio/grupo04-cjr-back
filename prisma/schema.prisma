@@ -1,142 +1,148 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client-js" 
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  url = env("DATABASE_URL")
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
 model usuarios {
-  id                 Int                  @id @default(autoincrement())
-  username           String               @unique
-  email              String               @unique
-  senha_hash         String 
-  nome               String 
+  id                 Int                    @id @default(autoincrement())
+  username           String                 @unique
+  email              String                 @unique
+  senha_hash         String
+  nome               String
   foto_perfil_url    String?
-  created_at         DateTime             @default(now())
-  updated_at         DateTime             @updatedAt
-  lojas              lojas[]
-  avaliacoes_produto avaliacao_produto[]
-  avaliacoes_loja    avaliacao_loja[]
-  comentarios        comentario_avaliacao[]
+  created_at         DateTime               @default(now())
+  updated_at         DateTime               @updatedAt
   itens_carrinho     ItemCarrinho[]
   pedidos            Pedido[]
+  avaliacoes_loja    avaliacao_loja[]
+  avaliacoes_produto avaliacao_produto[]
+  comentarios        comentario_avaliacao[]
+  lojas              lojas[]
 }
+
 model ItemCarrinho {
   id         Int      @id @default(autoincrement())
   usuario_id Int
   produto_id Int
   quantidade Int
+  produto    produtos @relation(fields: [produto_id], references: [id], onDelete: Cascade)
   usuario    usuarios @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
-  produto    produtos  @relation(fields: [produto_id], references: [id], onDelete: Cascade) 
 }
+
 model Pedido {
   id         Int          @id @default(autoincrement())
   usuario_id Int
   total      Float
   created_at DateTime     @default(now())
-  usuario    usuarios     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
   itens      ItemPedido[]
+  usuario    usuarios     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 }
+
 model ItemPedido {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   pedido_id  Int
   produto_id Int
   quantidade Int
   preco_pago Float
-  pedido     Pedido  @relation(fields: [pedido_id], references: [id], onDelete: Cascade)
+  pedido     Pedido   @relation(fields: [pedido_id], references: [id], onDelete: Cascade)
   produto    produtos @relation(fields: [produto_id], references: [id], onDelete: Cascade)
 }
+
 model lojas {
-  id Int @id @default(autoincrement())
-  id_dono Int 
-  usuario usuarios @relation(fields: [id_dono], references: [id], onDelete: Cascade)
-  nome String
-  descricao String?
-  banner_url String?
-  logo_url String?
-  foto_url String?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  avaliacoes avaliacao_loja[]
-  produtos produtos[]
+  id           Int              @id @default(autoincrement())
+  id_dono      Int
+  nome         String
+  descricao    String?
+  banner_url   String?
+  logo_url     String?
+  foto_url     String?
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
+  id_categoria Int?
+  avaliacoes   avaliacao_loja[]
+  categorias   categorias?      @relation(fields: [id_categoria], references: [id])
+  usuario      usuarios         @relation(fields: [id_dono], references: [id], onDelete: Cascade)
+  produtos     produtos[]
 }
 
 model categorias {
   id            Int          @id @default(autoincrement())
   id_cat_pai    Int?
-  categoriaPai  categorias?  @relation("Subcategorias", fields: [id_cat_pai], references: [id])
-  subcategorias categorias[] @relation("Subcategorias")
-
   icone_url     String?
   nome          String
+  categoriaPai  categorias?  @relation("Subcategorias", fields: [id_cat_pai], references: [id])
+  subcategorias categorias[] @relation("Subcategorias")
+  lojas         lojas[]
   produto       produtos[]
+}
 
-}
 model produtos {
-  id Int @id @default(autoincrement())
-  nome String 
-  id_loja Int 
-  loja lojas @relation(fields: [id_loja], references: [id])
-  id_categoria Int?
-  categoria categorias? @relation(fields: [id_categoria], references: [id])
-  descricao String
-  preco Float
-  estoque Int
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  avaliacoes avaliacao_produto[]
-  imagens imagem_produto[]
-  itens_carrinho ItemCarrinho[] 
+  id             Int                 @id @default(autoincrement())
+  nome           String
+  id_loja        Int
+  id_categoria   Int?
+  descricao      String
+  preco          Float
+  estoque        Int
+  created_at     DateTime            @default(now())
+  updated_at     DateTime            @updatedAt
+  itens_carrinho ItemCarrinho[]
   itens_pedido   ItemPedido[]
+  avaliacoes     avaliacao_produto[]
+  imagens        imagem_produto[]
+  categoria      categorias?         @relation(fields: [id_categoria], references: [id])
+  loja           lojas               @relation(fields: [id_loja], references: [id])
 }
-model avaliacao_produto{
-  id Int @id @default(autoincrement())
-  id_produto Int 
-  produto produtos @relation(fields: [id_produto], references: [id])
-  id_usuario Int
-  usuario usuarios @relation(fields: [id_usuario], references: [id])
-  nota Int 
-  comentario String?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+
+model avaliacao_produto {
+  id          Int                    @id @default(autoincrement())
+  id_produto  Int
+  id_usuario  Int
+  nota        Int
+  comentario  String?
+  created_at  DateTime               @default(now())
+  updated_at  DateTime               @updatedAt
+  produto     produtos               @relation(fields: [id_produto], references: [id])
+  usuario     usuarios               @relation(fields: [id_usuario], references: [id])
   comentarios comentario_avaliacao[]
 }
-model avaliacao_loja{
-  id Int @id @default(autoincrement())
-  id_loja Int
-  loja lojas @relation(fields: [id_loja], references: [id])
-  id_usuario Int 
-  usuario usuarios @relation(fields: [id_usuario], references: [id])
-  nota Int 
-  comentario String?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+
+model avaliacao_loja {
+  id          Int                    @id @default(autoincrement())
+  id_loja     Int
+  id_usuario  Int
+  nota        Int
+  comentario  String?
+  created_at  DateTime               @default(now())
+  updated_at  DateTime               @updatedAt
+  loja        lojas                  @relation(fields: [id_loja], references: [id])
+  usuario     usuarios               @relation(fields: [id_usuario], references: [id])
   comentarios comentario_avaliacao[]
 }
+
 model comentario_avaliacao {
-  id Int @id @default(autoincrement())
+  id                   Int                @id @default(autoincrement())
   id_avaliacao_produto Int?
-  avaliacao_produto avaliacao_produto? @relation(fields: [id_avaliacao_produto], references: [id])
-  id_avaliacao_loja Int?
-  loavaliacao_loja avaliacao_loja? @relation(fields: [id_avaliacao_loja], references: [id])
-  id_usuario Int 
-  usuario usuarios @relation(fields: [id_usuario], references: [id])
-  comentario String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id_avaliacao_loja    Int?
+  id_usuario           Int
+  comentario           String
+  created_at           DateTime           @default(now())
+  updated_at           DateTime           @updatedAt
+  loavaliacao_loja     avaliacao_loja?    @relation(fields: [id_avaliacao_loja], references: [id])
+  avaliacao_produto    avaliacao_produto? @relation(fields: [id_avaliacao_produto], references: [id])
+  usuario              usuarios           @relation(fields: [id_usuario], references: [id])
 }
-model imagem_produto{
-  id Int @id @default(autoincrement())
+
+model imagem_produto {
+  id         Int      @id @default(autoincrement())
   id_produto Int
-  produto produtos @relation(fields: [id_produto], references: [id])
-  url_imagem String 
-  ordem Int
+  url_imagem String
+  ordem      Int
+  produto    produtos @relation(fields: [id_produto], references: [id])
 }
 
 model PasswordReset {
