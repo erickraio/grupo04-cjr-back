@@ -48,13 +48,17 @@ export class LojasService {
     };
   }
   async update(id: number, dados: any) {
-    // Desestrutura o objeto recebido, separando a 'categoria' (que não existe no banco)
-    // do restante dos dados válidos (nome, foto_url, etc.)
-    const { categoria, ...dadosValidos } = dados;
+    // 1. Tiramos a "gambiarra" anterior e pegamos todos os dados
+    const { categoria, ...dadosValidos } = dados; 
+
+    // 2. Garantimos que o ID da categoria seja um Número (pois o Front envia como Texto no FormData)
+    if (dadosValidos.id_categoria) {
+      dadosValidos.id_categoria = Number(dadosValidos.id_categoria);
+    }
 
     return this.prisma.lojas.update({
       where: { id },
-      data: dadosValidos, // Envia apenas os dados que o Prisma reconhece
+      data: dadosValidos,
     });
   }
   async remove(id: number) {
