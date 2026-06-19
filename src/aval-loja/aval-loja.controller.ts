@@ -20,6 +20,11 @@ export class AvalLojaController {
     return this.avalLojaService.findAllByLoja(lojaId);
   }
 
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+  return this.avalLojaService.findOne(id);
+  }
+
   @UseGuards(AuthGuard)
   @Patch(':id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateAvalLojaDto: UpdateAvalLojaDto, @Req() req: any ) {
