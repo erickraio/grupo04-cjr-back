@@ -48,12 +48,34 @@ export class LojasService {
     };
   }
   async update(id: number, dados: any) {
+    // Desestrutura o objeto recebido, separando a 'categoria' (que não existe no banco)
+    // do restante dos dados válidos (nome, foto_url, etc.)
+    const { categoria, ...dadosValidos } = dados;
+
     return this.prisma.lojas.update({
       where: { id },
-      data: dados,
+      data: dadosValidos, // Envia apenas os dados que o Prisma reconhece
     });
   }
   async remove(id: number) {
+    // 1. Apaga avaliações feitas a esta loja
+    await this.prisma.avaliacao_loja.deleteMany({
+      where: { id_loja: id }
+    });
+
+    // 2. Busca os produtos desta loja e apaga as imagens e avaliações deles primeiro
+    const produtos = await this.prisma.produtos.findMany({ where: { id_loja: id } });
+    for (const prod of produtos) {
+      await this.prisma.imagem_produto.deleteMany({ where: { id_produto: prod.id } });
+      await this.prisma.avaliacao_produto.deleteMany({ where: { id_produto: prod.id } });
+    }
+
+    // 3. Apaga os produtos em si
+    await this.prisma.produtos.deleteMany({
+      where: { id_loja: id }
+    });
+
+    // 4. Agora sim, apaga a loja de forma segura
     return this.prisma.lojas.delete({
       where: { id },
     });

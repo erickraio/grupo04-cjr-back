@@ -9,7 +9,11 @@ export class CarrinhoService {
     return this.prisma.itemCarrinho.findMany({
       where: { usuario_id: usuarioId },
       include: {
-        produto: true,
+        produto: {
+          include: {
+            imagens: true, 
+          },
+        },
       },
     });
   }
